@@ -1,0 +1,6 @@
+name: ${name}
+main: io.github.lxgaming.bungeepatch.BungeePatch
+version: ${version}
+description: BungeePatch.
+author: LX_Gaming
+website: https://lxgaming.github.io/

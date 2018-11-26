@@ -25,6 +25,7 @@ import net.md_5.bungee.protocol.PacketWrapper;
 
 public final class WrappedDownstreamBridge extends DownstreamBridge {
     
+    private final boolean debug = BungeePatch.getInstance().getConfiguration().map(configuration -> configuration.getBoolean("BungeePatch.Debug")).orElse(false);
     private final boolean forcePacket = BungeePatch.getInstance().getConfiguration().map(configuration -> configuration.getBoolean("BungeePatch.ForcePacket")).orElse(false);
     private final ProxyServer proxyServer;
     private final UserConnection userConnection;
@@ -52,13 +53,19 @@ public final class WrappedDownstreamBridge extends DownstreamBridge {
                 getUserConnection().sendPacket(packetWrapper);
             }
             
-            BungeePatch.getInstance().getLogger().warning(ex.getMessage());
+            if (isDebug()) {
+                BungeePatch.getInstance().getLogger().warning(ex.getMessage() + " (" + userConnection.getName() + ")");
+            }
         }
     }
     
     @Override
     public String toString() {
         return "[" + getUserConnection().getName() + "] <-> " + getClass().getSimpleName() + " <-> [" + getServerConnection().getInfo().getName() + "]";
+    }
+    
+    public boolean isDebug() {
+        return debug;
     }
     
     public boolean isForcePacket() {

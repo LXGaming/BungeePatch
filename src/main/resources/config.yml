@@ -1,2 +1,3 @@
 BungeePatch:
+  Debug: false
   ForcePacket: true

@@ -66,5 +66,12 @@ public class BungeePatchListener implements Listener {
         } else {
             BungeePatch.getInstance().getLogger().warning("Failed to wrap downstream for " + userConnection.getName());
         }
+        
+        WrappedMinecraftDecoder decoder = new WrappedMinecraftDecoder(Protocol.GAME, false, userConnection.getPendingConnection().getVersion());
+        if (channel.pipeline().replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, decoder) != null) {
+            BungeePatch.getInstance().getLogger().info("Successfully wrapped decoder for " + userConnection.getName());
+        } else {
+            BungeePatch.getInstance().getLogger().warning("Failed to wrap decoder for " + userConnection.getName());
+        }
     }
 }

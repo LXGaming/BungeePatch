@@ -19,6 +19,7 @@ package io.github.lxgaming.bungeepatch.listeners;
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import io.github.lxgaming.bungeepatch.util.Toolbox;
 import io.github.lxgaming.bungeepatch.util.WrappedDownstreamBridge;
+import io.github.lxgaming.bungeepatch.util.WrappedMinecraftDecoder;
 import io.github.lxgaming.bungeepatch.util.WrappedUpstreamBridge;
 import io.netty.channel.Channel;
 import net.md_5.bungee.UserConnection;
@@ -29,6 +30,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.PipelineUtils;
+import net.md_5.bungee.protocol.Protocol;
 
 public class BungeePatchListener implements Listener {
     
@@ -36,9 +38,13 @@ public class BungeePatchListener implements Listener {
     public void onPostLogin(PostLoginEvent event) {
         UserConnection userConnection = (UserConnection) event.getPlayer();
         Channel channel = Toolbox.getChannelWrapper(userConnection.getClass(), userConnection).map(ChannelWrapper::getHandle).orElse(null);
+        if (channel == null) {
+            BungeePatch.getInstance().getLogger().severe("Channel is null for " + userConnection.getName());
+            return;
+        }
         
         // Cannot reference HandlerBoss class as it breaks SpongePls
-        if (channel != null && Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new WrappedUpstreamBridge(userConnection))) {
+        if (Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new WrappedUpstreamBridge(userConnection))) {
             BungeePatch.getInstance().getLogger().info("Successfully wrapped upstream for " + userConnection.getName());
         } else {
             BungeePatch.getInstance().getLogger().warning("Failed to wrap upstream for " + userConnection.getName());
@@ -49,9 +55,13 @@ public class BungeePatchListener implements Listener {
     public void onServerSwitch(ServerSwitchEvent event) {
         UserConnection userConnection = (UserConnection) event.getPlayer();
         Channel channel = Toolbox.getChannelWrapper(userConnection.getServer().getClass(), userConnection.getServer()).map(ChannelWrapper::getHandle).orElse(null);
+        if (channel == null) {
+            BungeePatch.getInstance().getLogger().severe("Channel is null for " + userConnection.getName());
+            return;
+        }
         
         // Cannot reference HandlerBoss class as it breaks SpongePls
-        if (channel != null && Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new WrappedDownstreamBridge(userConnection))) {
+        if (Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new WrappedDownstreamBridge(userConnection))) {
             BungeePatch.getInstance().getLogger().info("Successfully wrapped downstream for " + userConnection.getName());
         } else {
             BungeePatch.getInstance().getLogger().warning("Failed to wrap downstream for " + userConnection.getName());

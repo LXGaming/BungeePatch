@@ -27,7 +27,6 @@ public final class WrappedDownstreamBridge extends DownstreamBridge {
     
     private final boolean debug = BungeePatch.getInstance().getConfiguration().map(configuration -> configuration.getBoolean("BungeePatch.Debug")).orElse(false);
     private final boolean forcePacket = BungeePatch.getInstance().getConfiguration().map(configuration -> configuration.getBoolean("BungeePatch.ForcePacket")).orElse(false);
-    private final ProxyServer proxyServer;
     private final UserConnection userConnection;
     private final ServerConnection serverConnection;
     
@@ -37,7 +36,6 @@ public final class WrappedDownstreamBridge extends DownstreamBridge {
     
     public WrappedDownstreamBridge(ProxyServer proxyServer, UserConnection userConnection, ServerConnection serverConnection) {
         super(proxyServer, userConnection, serverConnection);
-        this.proxyServer = proxyServer;
         this.userConnection = userConnection;
         this.serverConnection = serverConnection;
     }
@@ -48,39 +46,19 @@ public final class WrappedDownstreamBridge extends DownstreamBridge {
             packetWrapper.buf.markReaderIndex();
             super.handle(packetWrapper);
         } catch (Exception ex) {
-            if (isForcePacket() && packetWrapper.buf.refCnt() > 0) {
-                packetWrapper.buf.resetReaderIndex();
-                getUserConnection().sendPacket(packetWrapper);
+            if (this.debug) {
+                BungeePatch.getInstance().getLogger().warning(ex.getMessage() + " (" + this.userConnection.getName() + ")");
             }
             
-            if (isDebug()) {
-                BungeePatch.getInstance().getLogger().warning(ex.getMessage() + " (" + userConnection.getName() + ")");
+            if (this.forcePacket && packetWrapper.buf.refCnt() > 0) {
+                packetWrapper.buf.resetReaderIndex();
+                this.userConnection.sendPacket(packetWrapper);
             }
         }
     }
     
     @Override
     public String toString() {
-        return "[" + getUserConnection().getName() + "] <-> " + getClass().getSimpleName() + " <-> [" + getServerConnection().getInfo().getName() + "]";
-    }
-    
-    public boolean isDebug() {
-        return debug;
-    }
-    
-    public boolean isForcePacket() {
-        return forcePacket;
-    }
-    
-    public ProxyServer getProxyServer() {
-        return proxyServer;
-    }
-    
-    public UserConnection getUserConnection() {
-        return userConnection;
-    }
-    
-    public ServerConnection getServerConnection() {
-        return serverConnection;
+        return "[" + this.userConnection.getName() + "] <-> " + getClass().getSimpleName() + " <-> [" + this.serverConnection.getInfo().getName() + "]";
     }
 }

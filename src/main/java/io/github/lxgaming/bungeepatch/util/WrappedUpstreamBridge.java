@@ -22,7 +22,6 @@ import net.md_5.bungee.connection.UpstreamBridge;
 
 public final class WrappedUpstreamBridge extends UpstreamBridge {
     
-    private final ProxyServer proxyServer;
     private final UserConnection userConnection;
     
     public WrappedUpstreamBridge(UserConnection userConnection) {
@@ -31,20 +30,11 @@ public final class WrappedUpstreamBridge extends UpstreamBridge {
     
     public WrappedUpstreamBridge(ProxyServer proxyServer, UserConnection userConnection) {
         super(proxyServer, userConnection);
-        this.proxyServer = proxyServer;
         this.userConnection = userConnection;
     }
     
     @Override
     public String toString() {
-        return "[" + getUserConnection().getName() + "] -> " + getClass().getSimpleName();
-    }
-    
-    public ProxyServer getProxyServer() {
-        return proxyServer;
-    }
-    
-    public UserConnection getUserConnection() {
-        return userConnection;
+        return "[" + this.userConnection.getName() + "] -> " + getClass().getSimpleName();
     }
 }

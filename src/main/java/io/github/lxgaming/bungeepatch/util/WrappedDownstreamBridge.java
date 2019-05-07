@@ -45,7 +45,7 @@ public final class WrappedDownstreamBridge extends DownstreamBridge {
         try {
             packetWrapper.buf.markReaderIndex();
             super.handle(packetWrapper);
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException | IndexOutOfBoundsException ex) {
             if (this.debug) {
                 BungeePatch.getInstance().getLogger().warning(ex.getMessage() + " (" + this.userConnection.getName() + ")");
             }

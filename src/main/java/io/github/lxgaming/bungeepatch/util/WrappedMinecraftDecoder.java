@@ -16,9 +16,12 @@
 
 package io.github.lxgaming.bungeepatch.util;
 
+import com.google.common.base.Strings;
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.DecoderException;
+import net.md_5.bungee.protocol.BadPacketException;
 import net.md_5.bungee.protocol.MinecraftDecoder;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.Protocol;
@@ -39,16 +42,26 @@ public final class WrappedMinecraftDecoder extends MinecraftDecoder {
         try {
             in.markReaderIndex();
             super.decode(ctx, in, out);
-        } catch (Exception ex) {
+        } catch (DecoderException ex) {
+            if (!(ex.getCause() instanceof BadPacketException)) {
+                throw ex;
+            }
+            
+            // Waterfall
+            if (Strings.nullToEmpty(ex.getCause().getMessage()).equals("Empty minecraft packet!")) {
+                throw ex;
+            }
+            
             if (this.debug) {
+                BungeePatch.getInstance().getLogger().warning(ex.getCause().getMessage());
                 BungeePatch.getInstance().getLogger().warning(ex.getMessage());
             }
             
             if (this.forcePacket) {
                 in.resetReaderIndex();
-                ByteBuf slice = in.slice();
+                ByteBuf slice = in.copy(); // https://github.com/SpigotMC/BungeeCord/issues/1714
                 in.skipBytes(in.readableBytes());
-                out.add(new PacketWrapper(null, slice.retain()));
+                out.add(new PacketWrapper(null, slice));
             }
         }
     }

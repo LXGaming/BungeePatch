@@ -17,7 +17,7 @@
 package io.github.lxgaming.bungeepatch;
 
 import io.github.lxgaming.bungeepatch.configuration.Config;
-import io.github.lxgaming.bungeepatch.listeners.BungeePatchListener;
+import io.github.lxgaming.bungeepatch.listener.BungeePatchListener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 

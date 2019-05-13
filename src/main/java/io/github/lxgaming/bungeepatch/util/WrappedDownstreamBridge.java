@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.bungeepatch.util;
 
+import com.google.common.base.Strings;
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.UserConnection;
@@ -45,7 +46,13 @@ public final class WrappedDownstreamBridge extends DownstreamBridge {
         try {
             packetWrapper.buf.markReaderIndex();
             super.handle(packetWrapper);
-        } catch (IllegalArgumentException | IndexOutOfBoundsException ex) {
+        } catch (RuntimeException ex) {
+            if (!Strings.nullToEmpty(ex.getMessage()).equals("VarInt too big")
+                    && !(ex instanceof IllegalArgumentException)
+                    && !(ex instanceof IndexOutOfBoundsException)) {
+                throw ex;
+            }
+            
             if (this.debug) {
                 BungeePatch.getInstance().getLogger().warning(ex.getMessage() + " (" + this.userConnection.getName() + ")");
             }

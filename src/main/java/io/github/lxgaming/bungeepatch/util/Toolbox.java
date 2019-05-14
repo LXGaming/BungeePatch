@@ -16,6 +16,10 @@
 
 package io.github.lxgaming.bungeepatch.util;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.PacketHandler;
 
@@ -23,6 +27,29 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class Toolbox {
+    
+    public static ComponentBuilder getTextPrefix() {
+        return new ComponentBuilder("")
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getPluginInformation().create()))
+                .append("[" + Reference.NAME + "]").bold(true).color(ChatColor.BLUE)
+                .append(" ", ComponentBuilder.FormatRetention.NONE);
+    }
+    
+    public static ComponentBuilder getPluginInformation() {
+        return new ComponentBuilder("")
+                .append(Reference.NAME).color(ChatColor.BLUE).bold(true).append("\n")
+                .append("    Version: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(Reference.VERSION).color(ChatColor.WHITE).append("\n")
+                .append("    Authors: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(Reference.AUTHORS).color(ChatColor.WHITE).append("\n")
+                .append("    Source: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(getURLClickEvent(Reference.SOURCE).create()).append("\n")
+                .append("    Website: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(getURLClickEvent(Reference.WEBSITE).create());
+    }
+    
+    public static ComponentBuilder getURLClickEvent(String url) {
+        return new ComponentBuilder("")
+                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
+                .append(url).color(ChatColor.BLUE)
+                .append(" ", ComponentBuilder.FormatRetention.NONE);
+    }
     
     public static boolean setHandler(Object object, PacketHandler packetHandler) {
         try {
@@ -60,6 +87,14 @@ public class Toolbox {
             
             throw new NoSuchFieldException();
         } catch (Exception ex) {
+            return Optional.empty();
+        }
+    }
+    
+    public static <T> Optional<T> newInstance(Class<T> type) {
+        try {
+            return Optional.of(type.newInstance());
+        } catch (Throwable ex) {
             return Optional.empty();
         }
     }

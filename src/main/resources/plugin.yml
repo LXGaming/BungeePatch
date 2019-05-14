@@ -1,6 +1,6 @@
 name: ${name}
-main: io.github.lxgaming.bungeepatch.BungeePatch
+main: io.github.lxgaming.bungeepatch.BungeePatchPlugin
 version: ${version}
-description: BungeePatch.
+description: Patches the stupid out of the BungeeCord.
 author: LX_Gaming
 website: https://lxgaming.github.io/

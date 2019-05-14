@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.bungeepatch.util;
+package io.github.lxgaming.bungeepatch.handler;
 
+
+import io.github.lxgaming.bungeepatch.util.Reference;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.UpstreamBridge;
 
-public final class WrappedUpstreamBridge extends UpstreamBridge {
+public class ClientHandler extends UpstreamBridge {
     
     private final UserConnection userConnection;
     
-    public WrappedUpstreamBridge(UserConnection userConnection) {
+    public ClientHandler(UserConnection userConnection) {
         this(ProxyServer.getInstance(), userConnection);
     }
     
-    public WrappedUpstreamBridge(ProxyServer proxyServer, UserConnection userConnection) {
-        super(proxyServer, userConnection);
-        this.userConnection = userConnection;
+    // Preserve default constructor
+    public ClientHandler(ProxyServer bungee, UserConnection con) {
+        super(bungee, con);
+        this.userConnection = con;
     }
     
     @Override
     public String toString() {
-        return "[" + this.userConnection.getName() + "] -> " + getClass().getSimpleName();
+        return super.toString().replace(getClass().getSuperclass().getSimpleName(), String.format("%s:%s", Reference.NAME, getClass().getSimpleName()));
     }
 }

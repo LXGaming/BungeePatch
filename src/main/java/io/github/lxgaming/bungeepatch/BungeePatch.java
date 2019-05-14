@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,44 +16,71 @@
 
 package io.github.lxgaming.bungeepatch;
 
+import com.google.common.collect.Sets;
 import io.github.lxgaming.bungeepatch.configuration.Config;
-import io.github.lxgaming.bungeepatch.listener.BungeePatchListener;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
+import io.github.lxgaming.bungeepatch.configuration.Configuration;
+import io.github.lxgaming.bungeepatch.util.Logger;
+import io.github.lxgaming.bungeepatch.util.Reference;
 
 import java.util.Optional;
+import java.util.Set;
 
-public class BungeePatch extends Plugin {
+public class BungeePatch {
     
     private static BungeePatch instance;
-    private final Config config = new Config();
+    private final Logger logger;
+    private final Configuration configuration;
+    private final Set<String> verboseUsers;
     
-    @Override
-    public void onEnable() {
+    public BungeePatch() {
         instance = this;
-        getConfig().loadConfig();
-        getProxy().getPluginManager().registerListener(getInstance(), new BungeePatchListener());
-        getLogger().info("BungeePatch has started.");
+        this.logger = new Logger();
+        this.configuration = new Configuration(BungeePatchPlugin.getInstance().getDataFolder().toPath());
+        this.verboseUsers = Sets.newConcurrentHashSet();
     }
     
-    @Override
-    public void onDisable() {
-        getLogger().info("BungeePatch has stopped.");
+    public void loadBungeePatch() {
+        getLogger().info("Initializing...");
+        reloadBungeePatch();
+        getLogger().info("{} v{} has loaded", Reference.NAME, Reference.VERSION);
+    }
+    
+    public boolean reloadBungeePatch() {
+        if (!getConfiguration().loadConfiguration()) {
+            return false;
+        }
+        
+        getConfiguration().saveConfiguration();
+        if (getConfig().map(Config::isDebug).orElse(false)) {
+            getLogger().debug("Debug mode enabled");
+        } else {
+            getLogger().info("Debug mode disabled");
+        }
+        
+        return true;
     }
     
     public static BungeePatch getInstance() {
         return instance;
     }
     
-    public Config getConfig() {
-        return config;
+    public Logger getLogger() {
+        return logger;
     }
     
-    public Optional<Configuration> getConfiguration() {
-        if (getConfig() != null) {
-            return Optional.ofNullable(getConfig().getConfiguration());
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+    
+    public Optional<Config> getConfig() {
+        if (getConfiguration() != null) {
+            return Optional.ofNullable(getConfiguration().getConfig());
         }
         
         return Optional.empty();
+    }
+    
+    public Set<String> getVerboseUsers() {
+        return verboseUsers;
     }
 }

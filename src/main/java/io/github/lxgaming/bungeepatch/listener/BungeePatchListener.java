@@ -17,10 +17,10 @@
 package io.github.lxgaming.bungeepatch.listener;
 
 import io.github.lxgaming.bungeepatch.BungeePatch;
+import io.github.lxgaming.bungeepatch.handler.ClientHandler;
+import io.github.lxgaming.bungeepatch.handler.DecodeHandler;
+import io.github.lxgaming.bungeepatch.handler.ServerHandler;
 import io.github.lxgaming.bungeepatch.util.Toolbox;
-import io.github.lxgaming.bungeepatch.util.WrappedDownstreamBridge;
-import io.github.lxgaming.bungeepatch.util.WrappedMinecraftDecoder;
-import io.github.lxgaming.bungeepatch.util.WrappedUpstreamBridge;
 import io.netty.channel.Channel;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -30,7 +30,6 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.PipelineUtils;
-import net.md_5.bungee.protocol.Protocol;
 
 public class BungeePatchListener implements Listener {
     
@@ -39,15 +38,15 @@ public class BungeePatchListener implements Listener {
         UserConnection userConnection = (UserConnection) event.getPlayer();
         Channel channel = Toolbox.getChannelWrapper(userConnection.getClass(), userConnection).map(ChannelWrapper::getHandle).orElse(null);
         if (channel == null) {
-            BungeePatch.getInstance().getLogger().severe("Channel is null for " + userConnection.getName());
+            BungeePatch.getInstance().getLogger().error("Channel is null for {}", userConnection.getName());
             return;
         }
         
         // Cannot reference HandlerBoss class as it breaks SpongePls
-        if (Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new WrappedUpstreamBridge(userConnection))) {
-            BungeePatch.getInstance().getLogger().info("Successfully wrapped upstream for " + userConnection.getName());
+        if (Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new ClientHandler(userConnection))) {
+            BungeePatch.getInstance().getLogger().debug("Successfully wrapped upstream for {}", userConnection.getName());
         } else {
-            BungeePatch.getInstance().getLogger().warning("Failed to wrap upstream for " + userConnection.getName());
+            BungeePatch.getInstance().getLogger().warn("Failed to wrap upstream for {}", userConnection.getName());
         }
     }
     
@@ -56,22 +55,22 @@ public class BungeePatchListener implements Listener {
         UserConnection userConnection = (UserConnection) event.getPlayer();
         Channel channel = Toolbox.getChannelWrapper(userConnection.getServer().getClass(), userConnection.getServer()).map(ChannelWrapper::getHandle).orElse(null);
         if (channel == null) {
-            BungeePatch.getInstance().getLogger().severe("Channel is null for " + userConnection.getName());
+            BungeePatch.getInstance().getLogger().error("Channel is null for {}", userConnection.getName());
             return;
         }
         
         // Cannot reference HandlerBoss class as it breaks SpongePls
-        if (Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new WrappedDownstreamBridge(userConnection))) {
-            BungeePatch.getInstance().getLogger().info("Successfully wrapped downstream for " + userConnection.getName());
+        if (Toolbox.setHandler(channel.pipeline().get(PipelineUtils.BOSS_HANDLER), new ServerHandler(userConnection))) {
+            BungeePatch.getInstance().getLogger().debug("Successfully wrapped downstream for " + userConnection.getName());
         } else {
-            BungeePatch.getInstance().getLogger().warning("Failed to wrap downstream for " + userConnection.getName());
+            BungeePatch.getInstance().getLogger().warn("Failed to wrap downstream for {}", userConnection.getName());
         }
         
-        WrappedMinecraftDecoder decoder = new WrappedMinecraftDecoder(Protocol.GAME, false, userConnection.getPendingConnection().getVersion());
-        if (channel.pipeline().replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, decoder) != null) {
-            BungeePatch.getInstance().getLogger().info("Successfully wrapped decoder for " + userConnection.getName());
+        DecodeHandler decodeHandler = new DecodeHandler(userConnection);
+        if (channel.pipeline().replace(PipelineUtils.PACKET_DECODER, PipelineUtils.PACKET_DECODER, decodeHandler) != null) {
+            BungeePatch.getInstance().getLogger().debug("Successfully wrapped decoder for {}", userConnection.getName());
         } else {
-            BungeePatch.getInstance().getLogger().warning("Failed to wrap decoder for " + userConnection.getName());
+            BungeePatch.getInstance().getLogger().warn("Failed to wrap decoder for {}", userConnection.getName());
         }
     }
 }

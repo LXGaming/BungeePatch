@@ -14,28 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.bungeepatch.configuration;
+package io.github.lxgaming.bungeepatch.util;
 
-public class Config {
+public class Reference {
     
-    private boolean debug = false;
-    private boolean clientForcePacket = true;
-    private boolean decodeForcePacket = true;
-    private boolean serverForcePacket = true;
-    
-    public boolean isDebug() {
-        return debug;
-    }
-    
-    public boolean isClientForcePacket() {
-        return clientForcePacket;
-    }
-    
-    public boolean isDecodeForcePacket() {
-        return decodeForcePacket;
-    }
-    
-    public boolean isServerForcePacket() {
-        return serverForcePacket;
-    }
+    public static final String ID = "bungeepatch";
+    public static final String NAME = "BungeePatch";
+    public static final String VERSION = "1.1.0";
+    public static final String DESCRIPTION = "Patches the stupid out of the BungeeCord.";
+    public static final String AUTHORS = "LX_Gaming";
+    public static final String SOURCE = "https://github.com/LXGaming/BungeePatch";
+    public static final String WEBSITE = "https://lxgaming.github.io/";
 }

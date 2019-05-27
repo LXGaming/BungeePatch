@@ -91,7 +91,7 @@ public class Toolbox {
         }
     }
     
-    public static <T> Optional<T> newInstance(Class<T> type) {
+    public static <T> Optional<T> newInstance(Class<? extends T> type) {
         try {
             return Optional.of(type.newInstance());
         } catch (Throwable ex) {

@@ -26,6 +26,8 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.protocol.PacketWrapper;
 
+import java.io.EOFException;
+
 public class ServerHandler extends DownstreamBridge {
     
     private final UserConnection userConnection;
@@ -45,9 +47,10 @@ public class ServerHandler extends DownstreamBridge {
         try {
             packet.buf.markReaderIndex();
             super.handle(packet);
-        } catch (IllegalArgumentException | IndexOutOfBoundsException ex) {
-            // IllegalArgumentException - Thrown by EntityMap (Unknown meta type)
-            // IndexOutOfBoundsException - Thrown by EntityMap
+        } catch (Exception ex) {
+            if (!handle(ex)) {
+                throw ex;
+            }
             
             packet.buf.resetReaderIndex();
             if (BungeePatch.getInstance().getConfig().map(Config::isDebug).orElse(false) || BungeePatch.getInstance().getVerboseUsers().contains(this.userConnection.getName())) {
@@ -58,6 +61,21 @@ public class ServerHandler extends DownstreamBridge {
                 this.userConnection.sendPacket(packet);
             }
         }
+    }
+    
+    private boolean handle(Exception ex) {
+        // IllegalArgumentException - Thrown by EntityMap (Unknown meta type)
+        // IndexOutOfBoundsException - Thrown by EntityMap
+        if (ex instanceof IllegalArgumentException || ex instanceof IndexOutOfBoundsException) {
+            return true;
+        }
+        
+        if (ex instanceof RuntimeException) {
+            // EOFException - Thrown by EntityMap
+            return ex.getCause() instanceof EOFException;
+        }
+        
+        return false;
     }
     
     @Override

@@ -36,6 +36,10 @@ public class ClientHandler extends UpstreamBridge {
         this.userConnection = con;
     }
     
+    private boolean handle(Exception ex) {
+        return false;
+    }
+    
     @Override
     public String toString() {
         return super.toString().replace(getClass().getSuperclass().getSimpleName(), String.format("%s:%s", Reference.NAME, getClass().getSimpleName()));

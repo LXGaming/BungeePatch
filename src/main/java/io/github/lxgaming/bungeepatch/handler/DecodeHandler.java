@@ -57,16 +57,8 @@ public class DecodeHandler extends MinecraftDecoder {
         try {
             in.markReaderIndex();
             super.decode(ctx, in, out);
-        } catch (DecoderException ex) {
-            // BadPacketException - Caused by NotEnoughIDs
-            
-            // Avoid capturing OverflowPacketException
-            if (!(ex.getCause() instanceof BadPacketException)) {
-                throw ex;
-            }
-            
-            // Waterfall - https://github.com/PaperMC/Waterfall/blob/master/BungeeCord-Patches/0048-Handle-empty-minecraft-packets.patch
-            if (Strings.nullToEmpty(ex.getCause().getMessage()).equals("Empty minecraft packet!")) {
+        } catch (Exception ex) {
+            if (!handle(ex)) {
                 throw ex;
             }
             
@@ -91,5 +83,18 @@ public class DecodeHandler extends MinecraftDecoder {
                 this.userConnection.sendPacket(new PacketWrapper(null, slice));
             }
         }
+    }
+    
+    private boolean handle(Exception ex) {
+        // BadPacketException - Caused by NotEnoughIDs
+        if (ex instanceof DecoderException) {
+            // Avoid capturing OverflowPacketException
+            if (ex.getCause() instanceof BadPacketException) {
+                // Waterfall - https://github.com/PaperMC/Waterfall/blob/master/BungeeCord-Patches/0048-Handle-empty-minecraft-packets.patch
+                return !Strings.nullToEmpty(ex.getCause().getMessage()).equals("Empty minecraft packet!");
+            }
+        }
+        
+        return false;
     }
 }

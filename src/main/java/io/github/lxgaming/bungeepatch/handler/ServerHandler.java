@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.bungeepatch.handler;
 
+import com.google.common.base.Strings;
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import io.github.lxgaming.bungeepatch.configuration.Config;
 import io.github.lxgaming.bungeepatch.util.Reference;
@@ -72,7 +73,12 @@ public class ServerHandler extends DownstreamBridge {
         
         if (ex instanceof RuntimeException) {
             // EOFException - Thrown by EntityMap
-            return ex.getCause() instanceof EOFException;
+            if (ex.getCause() instanceof EOFException) {
+                return true;
+            }
+            
+            // RuntimeException - Thrown by EntityMap
+            return Strings.nullToEmpty(ex.getMessage()).equals("VarInt too big");
         }
         
         return false;

@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import io.github.lxgaming.bungeepatch.configuration.Config;
 import io.github.lxgaming.bungeepatch.util.Reference;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.UserConnection;
@@ -45,21 +46,26 @@ public class ServerHandler extends DownstreamBridge {
     
     @Override
     public void handle(PacketWrapper packet) throws Exception {
+        ByteBuf copy = packet.buf.copy();
+        
         try {
-            packet.buf.markReaderIndex();
             super.handle(packet);
+            copy.release();
         } catch (Exception ex) {
+            packet.trySingleRelease();
             if (!handle(ex)) {
+                copy.release();
                 throw ex;
             }
             
-            packet.buf.resetReaderIndex();
             if (BungeePatch.getInstance().getConfig().map(Config::isDebug).orElse(false) || BungeePatch.getInstance().getVerboseUsers().contains(this.userConnection.getName())) {
-                BungeePatch.getInstance().getLogger().warn("{}:\n{} ({})", ex.getMessage(), ByteBufUtil.prettyHexDump(packet.buf), this.userConnection.getName());
+                BungeePatch.getInstance().getLogger().warn("{}:\n{} ({})", ex.getMessage(), ByteBufUtil.prettyHexDump(copy), this.userConnection.getName());
             }
             
-            if (BungeePatch.getInstance().getConfig().map(Config::isServerForcePacket).orElse(false) && packet.buf.refCnt() > 0) {
-                this.userConnection.sendPacket(packet);
+            if (BungeePatch.getInstance().getConfig().map(Config::isServerForcePacket).orElse(false)) {
+                this.userConnection.sendPacket(new PacketWrapper(null, copy));
+            } else {
+                copy.release();
             }
         }
     }

@@ -76,11 +76,11 @@ public class DecodeHandler extends MinecraftDecoder {
             
             if (BungeePatch.getInstance().getConfig().map(Config::isDecodeForcePacket).orElse(false)) {
                 // https://github.com/SpigotMC/BungeeCord/issues/1714
-                ByteBuf slice = in.copy();
+                ByteBuf copy = in.copy();
                 in.skipBytes(in.readableBytes());
                 
                 // As the MinecraftDecoder failed to handle the packet the UpstreamBridge shouldn't be able to either
-                this.userConnection.sendPacket(new PacketWrapper(null, slice));
+                this.userConnection.sendPacket(new PacketWrapper(null, copy));
             }
         }
     }

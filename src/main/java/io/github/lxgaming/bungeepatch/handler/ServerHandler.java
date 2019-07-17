@@ -28,7 +28,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.protocol.PacketWrapper;
 
-import java.io.EOFException;
+import java.io.IOException;
 
 public class ServerHandler extends DownstreamBridge {
     
@@ -78,8 +78,8 @@ public class ServerHandler extends DownstreamBridge {
         }
         
         if (ex instanceof RuntimeException) {
-            // EOFException - Thrown by EntityMap
-            if (ex.getCause() instanceof EOFException) {
+            // EOFException / IOException - Thrown by EntityMap
+            if (ex.getCause() instanceof IOException) {
                 return true;
             }
             

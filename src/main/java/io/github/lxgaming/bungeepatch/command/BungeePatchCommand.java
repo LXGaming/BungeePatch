@@ -18,7 +18,6 @@ package io.github.lxgaming.bungeepatch.command;
 
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import io.github.lxgaming.bungeepatch.BungeePatchPlugin;
-import io.github.lxgaming.bungeepatch.util.Reference;
 import io.github.lxgaming.bungeepatch.util.Toolbox;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -33,18 +32,18 @@ public class BungeePatchCommand extends Command {
     
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length == 1 && args[0].equalsIgnoreCase("help") && sender.hasPermission(String.format("%s.help.base", Reference.ID))) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("help") && sender.hasPermission(String.format("%s.help.base", BungeePatch.ID))) {
             sender.sendMessage(Toolbox.getTextPrefix()
                     .append("Help").color(ChatColor.GREEN)
                     .append("\n> ").color(ChatColor.BLUE)
-                    .append("/").color(ChatColor.GREEN).append(Reference.ID).color(ChatColor.GREEN).append(" reload").color(ChatColor.GREEN)
+                    .append("/").color(ChatColor.GREEN).append(BungeePatch.ID).color(ChatColor.GREEN).append(" reload").color(ChatColor.GREEN)
                     .append("\n> ").color(ChatColor.BLUE)
-                    .append("/").color(ChatColor.GREEN).append(Reference.ID).color(ChatColor.GREEN).append(" verbose <Username>").color(ChatColor.GREEN)
+                    .append("/").color(ChatColor.GREEN).append(BungeePatch.ID).color(ChatColor.GREEN).append(" verbose <Username>").color(ChatColor.GREEN)
                     .create());
             return;
         }
         
-        if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission(String.format("%s.reload.base", Reference.ID))) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission(String.format("%s.reload.base", BungeePatch.ID))) {
             BungeePatchPlugin.getInstance().getProxy().getScheduler().runAsync(BungeePatchPlugin.getInstance(), () -> {
                 if (BungeePatch.getInstance().reloadBungeePatch()) {
                     sender.sendMessage(Toolbox.getTextPrefix().append("Configuration reloaded").color(ChatColor.GREEN).create());
@@ -56,7 +55,7 @@ public class BungeePatchCommand extends Command {
             return;
         }
         
-        if (args.length >= 1 && args[0].equalsIgnoreCase("verbose") && sender.hasPermission(String.format("%s.verbose.base", Reference.ID))) {
+        if (args.length >= 1 && args[0].equalsIgnoreCase("verbose") && sender.hasPermission(String.format("%s.verbose.base", BungeePatch.ID))) {
             if (args.length == 1) {
                 sender.sendMessage(Toolbox.getTextPrefix().append("Invalid arguments: <Username>").color(ChatColor.RED).create());
                 return;
@@ -93,7 +92,7 @@ public class BungeePatchCommand extends Command {
         if (args.length != 0) {
             sender.sendMessage(new ComponentBuilder("")
                     .append("Use ").color(ChatColor.BLUE)
-                    .append("/").color(ChatColor.GREEN).append(Reference.ID).color(ChatColor.GREEN).append(" help ").color(ChatColor.GREEN)
+                    .append("/").color(ChatColor.GREEN).append(BungeePatch.ID).color(ChatColor.GREEN).append(" help ").color(ChatColor.GREEN)
                     .append("to view available commands.").color(ChatColor.BLUE)
                     .create());
             return;

@@ -20,12 +20,19 @@ import com.google.common.collect.Sets;
 import io.github.lxgaming.bungeepatch.configuration.Config;
 import io.github.lxgaming.bungeepatch.configuration.Configuration;
 import io.github.lxgaming.bungeepatch.util.Logger;
-import io.github.lxgaming.bungeepatch.util.Reference;
 
 import java.util.Optional;
 import java.util.Set;
 
 public class BungeePatch {
+    
+    public static final String ID = "bungeepatch";
+    public static final String NAME = "BungeePatch";
+    public static final String VERSION = "1.1.4";
+    public static final String DESCRIPTION = "Patches the stupid out of the BungeeCord.";
+    public static final String AUTHORS = "LX_Gaming";
+    public static final String SOURCE = "https://github.com/LXGaming/BungeePatch";
+    public static final String WEBSITE = "https://lxgaming.github.io/";
     
     private static BungeePatch instance;
     private final Logger logger;
@@ -42,7 +49,7 @@ public class BungeePatch {
     public void loadBungeePatch() {
         getLogger().info("Initializing...");
         reloadBungeePatch();
-        getLogger().info("{} v{} has loaded", Reference.NAME, Reference.VERSION);
+        getLogger().info("{} v{} has loaded", BungeePatch.NAME, BungeePatch.VERSION);
     }
     
     public boolean reloadBungeePatch() {

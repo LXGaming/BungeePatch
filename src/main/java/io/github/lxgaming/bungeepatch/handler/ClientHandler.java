@@ -17,7 +17,7 @@
 package io.github.lxgaming.bungeepatch.handler;
 
 
-import io.github.lxgaming.bungeepatch.util.Reference;
+import io.github.lxgaming.bungeepatch.BungeePatch;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.UpstreamBridge;
@@ -42,6 +42,6 @@ public class ClientHandler extends UpstreamBridge {
     
     @Override
     public String toString() {
-        return super.toString().replace(getClass().getSuperclass().getSimpleName(), String.format("%s:%s", Reference.NAME, getClass().getSimpleName()));
+        return super.toString().replace(getClass().getSuperclass().getSimpleName(), String.format("%s:%s", BungeePatch.NAME, getClass().getSimpleName()));
     }
 }

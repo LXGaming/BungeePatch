@@ -16,6 +16,7 @@
 
 package io.github.lxgaming.bungeepatch.util;
 
+import io.github.lxgaming.bungeepatch.BungeePatch;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -31,17 +32,17 @@ public class Toolbox {
     public static ComponentBuilder getTextPrefix() {
         return new ComponentBuilder("")
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, getPluginInformation().create()))
-                .append("[" + Reference.NAME + "]").bold(true).color(ChatColor.BLUE)
+                .append("[" + BungeePatch.NAME + "]").bold(true).color(ChatColor.BLUE)
                 .append(" ", ComponentBuilder.FormatRetention.NONE);
     }
     
     public static ComponentBuilder getPluginInformation() {
         return new ComponentBuilder("")
-                .append(Reference.NAME).color(ChatColor.BLUE).bold(true).append("\n")
-                .append("    Version: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(Reference.VERSION).color(ChatColor.WHITE).append("\n")
-                .append("    Authors: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(Reference.AUTHORS).color(ChatColor.WHITE).append("\n")
-                .append("    Source: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(getURLClickEvent(Reference.SOURCE).create()).append("\n")
-                .append("    Website: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(getURLClickEvent(Reference.WEBSITE).create());
+                .append(BungeePatch.NAME).color(ChatColor.BLUE).bold(true).append("\n")
+                .append("    Version: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(BungeePatch.VERSION).color(ChatColor.WHITE).append("\n")
+                .append("    Authors: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(BungeePatch.AUTHORS).color(ChatColor.WHITE).append("\n")
+                .append("    Source: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(getURLClickEvent(BungeePatch.SOURCE).create()).append("\n")
+                .append("    Website: ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_GRAY).append(getURLClickEvent(BungeePatch.WEBSITE).create());
     }
     
     public static ComponentBuilder getURLClickEvent(String url) {

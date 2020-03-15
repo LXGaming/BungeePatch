@@ -19,7 +19,6 @@ package io.github.lxgaming.bungeepatch.handler;
 import com.google.common.base.Strings;
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import io.github.lxgaming.bungeepatch.configuration.Config;
-import io.github.lxgaming.bungeepatch.util.Reference;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import net.md_5.bungee.ServerConnection;
@@ -92,6 +91,6 @@ public class ServerHandler extends DownstreamBridge {
     
     @Override
     public String toString() {
-        return super.toString().replace(getClass().getSuperclass().getSimpleName(), String.format("%s:%s", Reference.NAME, getClass().getSimpleName()));
+        return super.toString().replace(getClass().getSuperclass().getSimpleName(), String.format("%s:%s", BungeePatch.NAME, getClass().getSimpleName()));
     }
 }

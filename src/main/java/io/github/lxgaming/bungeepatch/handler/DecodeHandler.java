@@ -16,16 +16,13 @@
 
 package io.github.lxgaming.bungeepatch.handler;
 
-import com.google.common.base.Strings;
 import io.github.lxgaming.bungeepatch.BungeePatch;
 import io.github.lxgaming.bungeepatch.configuration.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.DecoderException;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.protocol.BadPacketException;
 import net.md_5.bungee.protocol.MinecraftDecoder;
 import net.md_5.bungee.protocol.PacketWrapper;
 import net.md_5.bungee.protocol.Protocol;
@@ -86,15 +83,6 @@ public class DecodeHandler extends MinecraftDecoder {
     }
     
     private boolean handle(Exception ex) {
-        // BadPacketException - Caused by NotEnoughIDs
-        if (ex instanceof DecoderException) {
-            // Avoid capturing OverflowPacketException
-            if (ex.getCause() instanceof BadPacketException) {
-                // Waterfall - https://github.com/PaperMC/Waterfall/blob/master/BungeeCord-Patches/0048-Handle-empty-minecraft-packets.patch
-                return !Strings.nullToEmpty(ex.getCause().getMessage()).equals("Empty minecraft packet!");
-            }
-        }
-        
         return false;
     }
 }

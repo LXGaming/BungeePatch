@@ -25,6 +25,7 @@ import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.DownstreamBridge;
+import net.md_5.bungee.protocol.BadPacketException;
 import net.md_5.bungee.protocol.PacketWrapper;
 
 import java.io.IOException;
@@ -70,6 +71,11 @@ public class ServerHandler extends DownstreamBridge {
     }
     
     private boolean handle(Exception ex) {
+        // BadPacketException - Thrown by Waterfall (0053-Speed-up-some-common-exceptions.patch)
+        if (ex instanceof BadPacketException) {
+            return true;
+        }
+        
         // IllegalArgumentException - Thrown by EntityMap (Unknown meta type)
         // IndexOutOfBoundsException - Thrown by EntityMap
         if (ex instanceof IllegalArgumentException || ex instanceof IndexOutOfBoundsException) {
